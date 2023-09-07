@@ -16,7 +16,7 @@ import java.util.List;
 
 
 @Service
-public class TelegramBotUpdatesListener implements UpdatesListener {
+public class TelegramBotUpdatesListener {
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
@@ -29,12 +29,18 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
     @PostConstruct
     public void init() {
-        telegramBot.setUpdatesListener(this);
+        telegramBot.setUpdatesListener(updates -> {
+            updates.forEach(this::process);
+            return UpdatesListener.CONFIRMED_UPDATES_ALL;
+        });
     }
+//    @PostConstruct
+//    public void init() {
+//        telegramBot.setUpdatesListener(this);
+//    }
 
-    @Override
-    public int process(List<Update> updates) {
-        updates.forEach(update -> {
+
+    public void process(Update update) {
 
             String updateMessageText = update.message().text();
 
@@ -61,8 +67,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
             } catch (Exception e) {
                 logger.error("Error sending message", e);
             }
-        });
-        return UpdatesListener.CONFIRMED_UPDATES_ALL;
+
     }
 
     private void sendMessage(long chatId, String messageText) {
