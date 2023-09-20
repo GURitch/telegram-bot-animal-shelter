@@ -1,7 +1,6 @@
 package com.application.animalshelter.service;
 
 import com.application.animalshelter.entıty.Shelter;
-
 import java.util.Collection;
 import java.util.Optional;
 

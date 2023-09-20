@@ -4,7 +4,6 @@ import com.application.animalshelter.dao.AnimalDAO;
 import com.application.animalshelter.entıty.Animal;
 import com.application.animalshelter.service.AnimalService;
 import org.springframework.stereotype.Service;
-
 import java.util.Collection;
 import java.util.Optional;
 

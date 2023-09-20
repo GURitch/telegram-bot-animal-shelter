@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Collection;
+import java.util.Objects;
 
 
 @Entity
@@ -105,5 +106,33 @@ public class Shelter {
 
     public void setAnimals(Collection<Animal> animals) {
         this.animals = animals;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Shelter shelter = (Shelter) o;
+        return Objects.equals(id, shelter.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Shelter{" +
+                "id=" + id +
+                ", countryName=" + countryName +
+                ", cityName=" + cityName +
+                ", address='" + address + '\'' +
+                ", workingHours='" + workingHours + '\'' +
+                ", passRules='" + passRules + '\'' +
+                ", shelterRules='" + shelterRules + '\'' +
+                ", animalType=" + animalType +
+                ", animals=" + animals +
+                '}';
     }
 }

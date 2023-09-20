@@ -1,8 +1,6 @@
 package com.application.animalshelter.service;
 
-import com.application.animalshelter.dao.AnimalDAO;
 import com.application.animalshelter.entıty.Animal;
-
 import java.util.Collection;
 import java.util.Optional;
 

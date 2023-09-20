@@ -2,10 +2,8 @@ package com.application.animalshelter.service.impl;
 
 import com.application.animalshelter.dao.ShelterDAO;
 import com.application.animalshelter.entıty.Shelter;
-import com.application.animalshelter.exception.ShelterNotFoundException;
 import com.application.animalshelter.service.ShelterService;
 import org.springframework.stereotype.Service;
-
 import java.util.Collection;
 import java.util.Optional;
 

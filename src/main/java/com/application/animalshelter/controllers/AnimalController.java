@@ -1,7 +1,6 @@
 package com.application.animalshelter.controllers;
 
 import com.application.animalshelter.entıty.Animal;
-import com.application.animalshelter.entıty.Shelter;
 import com.application.animalshelter.service.AnimalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
