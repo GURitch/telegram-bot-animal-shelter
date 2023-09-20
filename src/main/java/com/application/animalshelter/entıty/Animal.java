@@ -7,23 +7,18 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "animals")
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private int age;
-    private String animalType;
+    private AnimalType animalType;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "shelter_id")
-    private AnimalShelter shelter;
-
-    public Animal() {
-    }
+    private Shelter shelter;
 
     public Long getId() {
         return id;
@@ -49,19 +44,19 @@ public class Animal {
         this.age = age;
     }
 
-    public String getAnimalType() {
+    public AnimalType getAnimalType() {
         return animalType;
     }
 
-    public void setAnimalType(String animalType) {
+    public void setAnimalType(AnimalType animalType) {
         this.animalType = animalType;
     }
 
-    public AnimalShelter getShelter() {
+    public Shelter getShelter() {
         return shelter;
     }
 
-    public void setShelter(AnimalShelter shelter) {
+    public void setShelter(Shelter shelter) {
         this.shelter = shelter;
     }
 

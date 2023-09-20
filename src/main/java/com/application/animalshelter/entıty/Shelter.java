@@ -10,10 +10,10 @@ import java.util.Collection;
 
 
 @Entity
-public class AnimalShelter {
+public class Shelter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long Id;
+    Long id;
 
     @Enumerated(EnumType.STRING)
     private CountryName countryName;
@@ -36,7 +36,7 @@ public class AnimalShelter {
     private Collection<Animal> animals;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public CountryName getCountryName() {
