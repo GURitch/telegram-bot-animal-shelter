@@ -70,4 +70,40 @@ public class Shelter {
     public Collection<Animal> getAnimals() {
         return animals;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setCountryName(CountryName countryName) {
+        this.countryName = countryName;
+    }
+
+    public void setCityName(CityName cityName) {
+        this.cityName = cityName;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setWorkingHours(String workingHours) {
+        this.workingHours = workingHours;
+    }
+
+    public void setPassRules(String passRules) {
+        this.passRules = passRules;
+    }
+
+    public void setShelterRules(String shelterRules) {
+        this.shelterRules = shelterRules;
+    }
+
+    public void setAnimalType(AnimalType animalType) {
+        this.animalType = animalType;
+    }
+
+    public void setAnimals(Collection<Animal> animals) {
+        this.animals = animals;
+    }
 }

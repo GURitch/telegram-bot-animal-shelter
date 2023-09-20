@@ -36,14 +36,14 @@ public class ShelterController {
         return ResponseEntity.ok(shelter.get());
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<Collection<Shelter>> getAllShelters(){
-        return ResponseEntity.ok(shelterService.getAllShelters());
-    }
-
     @DeleteMapping()
     public ResponseEntity<String> deleteShelter(@RequestBody Shelter shelter){
         shelterService.deleteShelter(shelter);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<Collection<Shelter>> getAllShelters(){
+        return ResponseEntity.ok(shelterService.getAllShelters());
     }
 }
