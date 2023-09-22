@@ -11,9 +11,12 @@ public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private AnimalType animalType;
+
     private String name;
     private int age;
-    private AnimalType animalType;
 
     @JsonBackReference
     @ManyToOne

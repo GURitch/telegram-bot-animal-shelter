@@ -14,7 +14,9 @@ import java.util.Objects;
 public class Shelter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
+
+    private String name;
 
     @Enumerated(EnumType.STRING)
     private CountryName countryName;
@@ -22,15 +24,13 @@ public class Shelter {
     @Enumerated(EnumType.STRING)
     private CityName cityName;
 
-    private String address;
-
-    private String workingHours;
-
-    private String passRules;
-    private String shelterRules;
-
     @Enumerated(EnumType.STRING)
     private AnimalType animalType;
+
+    private String address;
+    private String workingHours;
+    private String passRules;
+    private String shelterRules;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "shelter")
@@ -40,68 +40,76 @@ public class Shelter {
         return id;
     }
 
-    public CountryName getCountryName() {
-        return countryName;
-    }
-
-    public CityName getCityName() {
-        return cityName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getWorkingHours() {
-        return workingHours;
-    }
-
-    public String getPassRules() {
-        return passRules;
-    }
-
-    public String getShelterRules() {
-        return shelterRules;
-    }
-
-    public AnimalType getAnimalType() {
-        return animalType;
-    }
-
-    public Collection<Animal> getAnimals() {
-        return animals;
-    }
-
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public CountryName getCountryName() {
+        return countryName;
     }
 
     public void setCountryName(CountryName countryName) {
         this.countryName = countryName;
     }
 
+    public CityName getCityName() {
+        return cityName;
+    }
+
     public void setCityName(CityName cityName) {
         this.cityName = cityName;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
     public void setAddress(String address) {
         this.address = address;
     }
 
+    public String getWorkingHours() {
+        return workingHours;
+    }
+
     public void setWorkingHours(String workingHours) {
         this.workingHours = workingHours;
+    }
+
+    public String getPassRules() {
+        return passRules;
     }
 
     public void setPassRules(String passRules) {
         this.passRules = passRules;
     }
 
+    public String getShelterRules() {
+        return shelterRules;
+    }
+
     public void setShelterRules(String shelterRules) {
         this.shelterRules = shelterRules;
     }
 
+    public AnimalType getAnimalType() {
+        return animalType;
+    }
+
     public void setAnimalType(AnimalType animalType) {
         this.animalType = animalType;
+    }
+
+    public Collection<Animal> getAnimals() {
+        return animals;
     }
 
     public void setAnimals(Collection<Animal> animals) {
@@ -135,5 +143,4 @@ public class Shelter {
                 ", animals=" + animals +
                 '}';
     }
-
 }

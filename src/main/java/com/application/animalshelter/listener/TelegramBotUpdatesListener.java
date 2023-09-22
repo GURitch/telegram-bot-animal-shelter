@@ -1,31 +1,42 @@
 package com.application.animalshelter.listener;
 
+import com.application.animalshelter.dao.AppUserDAO;
+import com.application.animalshelter.entıty.AppUser;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Класс, отвечающий за обработку обновлений бота Telegram.
+ * Слушает обновления и передает их на обработку соответствующим методам.
+ */
 @Service
 public class TelegramBotUpdatesListener {
 
     private final Logger logger = LoggerFactory.getLogger(TelegramBotUpdatesListener.class);
 
     private final TelegramBot telegramBot;
-
     private final MessageBuilder messageBuilder;
+    private final AppUserDAO appUserDAO;
 
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageBuilder messageBuilder) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageBuilder messageBuilder, AppUserDAO appUserDAO) {
         this.telegramBot = telegramBot;
         this.messageBuilder = messageBuilder;
+        this.appUserDAO = appUserDAO;
     }
 
+    /**
+     * Метод, выполняющийся после инициализации класса.
+     * Устанавливает слушателя для обновлений и передает их на обработку.
+     */
     @PostConstruct
     public void init() {
         telegramBot.setUpdatesListener(updates -> {
@@ -34,152 +45,85 @@ public class TelegramBotUpdatesListener {
         });
     }
 
+    /**
+     * Метод для обработки обновления (нового сообщения или коллбэка).
+     *
+     * @param update Объект, представляющий собой обновление.
+     */
     public void process(Update update) {
-
-        if (update.message() == null) {
-            logger.info("Processing update: {}", update);
+        if (update.message() != null && update.message().text().equals("/start")) {
+            processStartCommand(update);
+        } else if (update.callbackQuery() != null) {
+            processCallbackQuery(update);
+        } else if (update.message() != null) {
+            processInvalidCommand(update);
+        } else {
+            logger.info("Update is not supported: {}", update);
         }
-
-        logger.info("Processing update: {}", update);
-
-        long chatId = update.message().chat().id();
-        String userName = update.message().chat().username();
-        String userMessageText = update.message().text();
-
-//        if (update.callbackQuery() != null) {
-//            sendMessage(chatId, "Давайте продолжим");
-//            String callbackQueryText = update.callbackQuery().data();
-//            sendMessage(messageBuilder.getReplyMessage(chatId, userName, callbackQueryText));
-//
-//        } else {
-//        }
-            sendMessage(messageBuilder.getReplyMessage(chatId, userName, userMessageText));
     }
 
+    /**
+     * Метод для обработки команды "/start" и сохранения пользователя в БД
+     *
+     * @param update Объект, представляющий собой обновление с командой "/start".
+     */
+    private void processStartCommand(Update update) {
+        logger.info("Processing /start command: {}", update.message());
+        long chatId = update.message().chat().id();
+        String userName = update.message().chat().username();
+
+        User telegramUser = update.message().from();
+        // Проверяем, существует ли пользователь в базе данных
+        if (appUserDAO.findByTelegramUserId(telegramUser.id()) == null) {
+            // Если пользователя не существует, отправляем приветственное сообщение пользователю,
+            // создаем временную запись пользователя и сохраняем в базе данных
+            sendMessage(messageBuilder.getStartMessage(chatId, userName));
+            AppUser tempAppUser = new AppUser();
+            tempAppUser.setTelegramUserId(telegramUser.id());
+            tempAppUser.setFirstName(telegramUser.firstName());
+            tempAppUser.setLastName(telegramUser.lastName());
+            tempAppUser.setUserName(telegramUser.username());
+            tempAppUser.setActive(true);
+            appUserDAO.save(tempAppUser);
+        } else {
+            // Если пользователь уже обращался к боту ранее, то новое обращение начинается с выбора приюта
+            sendMessage(new SendMessage(chatId, "Давай продолжим! Выбери, что тебя интересует:").replyMarkup(messageBuilder.getShelterTypeKeyboard()));
+        }
+    }
+
+    /**
+     * Метод для обработки коллбэк-запроса.
+     *
+     * @param update Объект, представляющий собой обновление с коллбэк-запросом.
+     */
+    private void processCallbackQuery(Update update) {
+        logger.info("Processing callback query: {}", update.callbackQuery());
+        long chatId = update.callbackQuery().message().chat().id();
+        String userMessageText = update.callbackQuery().data();
+        sendMessage(messageBuilder.getReplyMessage(chatId, userMessageText));
+    }
+
+    /**
+     * Метод для обработки неправильной команды.
+     *
+     * @param update Объект, представляющий собой обновление с неправильной командой.
+     */
+    private void processInvalidCommand(Update update) {
+        logger.info("Processing invalid command: {}", update.message());
+        long chatId = update.message().chat().id();
+        sendMessage(new SendMessage(chatId, "Я не понимаю вашу команду. Пожалуйста, выберите приют: ").replyMarkup(messageBuilder.getShelterTypeKeyboard()));
+    }
+
+    /**
+     * Метод для отправки сообщения через бота Telegram.
+     *
+     * @param message Сообщение для отправки.
+     */
     private void sendMessage(SendMessage message) {
         try {
             telegramBot.execute(message);
-
-        } catch (Exception e) {
-            logger.error("Error sending message", e);
-        }
-    }
-
-    private void sendMessage(Long chatId, String textMessage) {
-        SendMessage message = new SendMessage(chatId, textMessage);
-        try {
-            telegramBot.execute(message);
-
         } catch (Exception e) {
             logger.error("Error sending message", e);
         }
     }
 }
-
-
-//@Override
-//    public int process(List<Update> updates) {
-//        updates.forEach(update -> {
-//            log.info("Processing update: {}", update);
-//            if(update.message()==null && update.callbackQuery()==null) {
-//                log.info("message = null");
-//            }
-//            if(update.message()!=null){
-//                switchMessages(update.message());
-//            }
-//            if(update.callbackQuery()!=null){
-//                switchCallback(update.callbackQuery());
-//            }
-//    });
-//    return CONFIRMED_UPDATES_ALL;
-//}
-//    private void switchMessages(Message message){
-//        log.info("switchMessages is processing...");
-//        User telegramUser = message.from();
-//        Long chatId = message.chat().id();
-//
-//        if (message.text().equals("/start")) {
-//            if(appUserDAO.findByTelegramUserId(telegramUser.id())==null) {
-//                //кнопка стартового меню
-//                telegramBot.execute(new SetChatMenuButton().chatId(chatId)
-////                    .menuButton(new MenuButtonWebApp("Menu", new WebAppInfo("https://core.telegram.org"))));
-//                        .menuButton(new MenuButton("/hello")));
-//
-//                String helloText = "Привет, " + telegramUser.firstName() + "!\n" +
-//                        "Я помогу тебе забрать собаку или кошку домой из приюта Астаны. Для начала выбери животное:";
-//
-//                //отправляем кнопки с вариантами приютов
-//                InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(
-//                        new InlineKeyboardButton("Приют для кошек  " + "\uD83D\uDC08")
-//                                .callbackData("catShelter"),
-//                        new InlineKeyboardButton("Приют для собак   " + "\uD83D\uDC15")
-//                                .callbackData("dogShelter"));
-//
-//                SendMessage mess = new SendMessage(chatId, helloText);
-//                mess.replyMarkup(inlineKeyboard);
-//                telegramBot.execute(mess);
-//
-//                AppUser tempAppUser = new AppUser();
-//                tempAppUser.setTelegramUserId(telegramUser.id());
-//                tempAppUser.setFirstName(telegramUser.firstName());
-//                tempAppUser.setLastName(telegramUser.lastName());
-//                tempAppUser.setUserName(telegramUser.username());
-//                tempAppUser.setActive(true);
-//
-//                AppUser addedAppUser = appUserDAO.save(tempAppUser);
-//            } else{
-//                InlineKeyboardMarkup inlineKeyboard1 = new InlineKeyboardMarkup();
-//                inlineKeyboard1.addRow(new InlineKeyboardButton("Информация о приютах")
-//                        .callbackData("infoAboutShelter"));
-//                inlineKeyboard1.addRow(new InlineKeyboardButton("Как взять животное")
-//                        .callbackData("howTakeAnimal"));
-//                inlineKeyboard1.addRow(new InlineKeyboardButton("Прислать отчет о питомце")
-//                        .callbackData("sendReport"));
-//                inlineKeyboard1.addRow(new InlineKeyboardButton("Позвать волонтера")
-//                        .callbackData("callVolunteer"));
-//
-//                SendMessage mess1 = new SendMessage(chatId,"Давай продолжим! Выбери, что тебя интересует:")
-//                        .replyMarkup(inlineKeyboard1);
-//                telegramBot.execute(mess1);
-//            }
-//        }
-//    }
-//
-//    private void switchCallback(CallbackQuery callbackQuery){
-//        if(callbackQuery.data().contains("catShelter")||callbackQuery.data().contains("dogShelter")){
-//            log.info("callback_data = catShelter");
-//
-//            InlineKeyboardMarkup inlineKeyboard1 = new InlineKeyboardMarkup();
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Информация о приютах")
-//                    .callbackData("infoAboutShelter"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Как взять животное")
-//                    .callbackData("howTakeAnimal"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Прислать отчет о питомце")
-//                    .callbackData("sendReport"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Позвать волонтера")
-//                    .callbackData("callVolunteer"));
-//
-//            SendMessage mess1 = new SendMessage(callbackQuery.message().chat().id(),"Выбор меню")
-//                    .replyMarkup(inlineKeyboard1);
-//            telegramBot.execute(mess1);
-//        } else if(callbackQuery.data().contains("infoAboutShelter")){
-//            log.info("callback_data = infoAboutShelter");
-//
-//            InlineKeyboardMarkup inlineKeyboard1 = new InlineKeyboardMarkup();
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Адреса приютов и время работы")
-//                    .callbackData("sheltersAddresses"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Оформление пропуска на машину")
-//                    .callbackData("passCar"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Правила нахождения внутри и общения с животным")
-//                    .callbackData("shelterRules"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Записать контактные данные для связи")
-//                    .callbackData("contactInformation"));
-//            inlineKeyboard1.addRow(new InlineKeyboardButton("Позвать волонтера")
-//                    .callbackData("callVolunteer"));
-//
-//            SendMessage mess1 = new SendMessage(callbackQuery.message().chat().id(),"Я помогу тебе " +
-//                    "узнать информацию о приюте! Выбери, что тебя интересует: ")
-//                    .replyMarkup(inlineKeyboard1);
-//            telegramBot.execute(mess1);
-//        }
-//    }
