@@ -1,3 +1,3 @@
-databaseChangeLog:
-  - include:
-      file: liquibase/scripts/changesetSQL.sql
+#databaseChangeLog:
+#  - include:
+#      file: liquibase/scripts/changesetSQL.sql
