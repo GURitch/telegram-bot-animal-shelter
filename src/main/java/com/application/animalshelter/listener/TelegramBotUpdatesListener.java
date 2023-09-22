@@ -35,25 +35,38 @@ public class TelegramBotUpdatesListener {
     }
 
     public void process(Update update) {
-        String userName = update.message().chat().username();
-        String userMessageText = update.message().text();
-        long chatId = update.message().chat().id();
 
         if (update.message() == null) {
-            return;
+            logger.info("Processing update: {}", update);
         }
+
         logger.info("Processing update: {}", update);
-        sendMessage(chatId, userName, userMessageText);
+
+        long chatId = update.message().chat().id();
+        String userName = update.message().chat().username();
+        String userMessageText = update.message().text();
+
+//        if (update.callbackQuery() != null) {
+//            sendMessage(chatId, "Давайте продолжим");
+//            String callbackQueryText = update.callbackQuery().data();
+//            sendMessage(messageBuilder.getReplyMessage(chatId, userName, callbackQueryText));
+//
+//        } else {
+//        }
+            sendMessage(messageBuilder.getReplyMessage(chatId, userName, userMessageText));
     }
 
-    private void sendMessage(long chatId, String userName, String userMessageText) {
-        SendMessage message = switch (userMessageText) {
-            case "/start" -> messageBuilder.getStartMessage(chatId, userName);
-            case "Информация о боте" -> messageBuilder.getInfoMessage(chatId);
-            case "Вернуться к выбору приюта" -> messageBuilder.getKeyboardShelterMessage(chatId);
-            case "Приют для кошек", "Приют для собак" -> messageBuilder.getKeyboardCommandsMessage(chatId, userMessageText);
-            default -> throw new IllegalStateException("Unexpected value: " + userMessageText);
-        };
+    private void sendMessage(SendMessage message) {
+        try {
+            telegramBot.execute(message);
+
+        } catch (Exception e) {
+            logger.error("Error sending message", e);
+        }
+    }
+
+    private void sendMessage(Long chatId, String textMessage) {
+        SendMessage message = new SendMessage(chatId, textMessage);
         try {
             telegramBot.execute(message);
 

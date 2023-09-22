@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.request.*;
 import com.pengrad.telegrambot.request.SendMessage;
 import org.springframework.stereotype.Service;
 
-import static com.application.animalshelter.listener.Commands.*;
+import static com.application.animalshelter.enums.Commands.*;
 
 @Service
 public class MessageBuilder {
@@ -29,25 +29,41 @@ public class MessageBuilder {
     }
 
     public SendMessage getKeyboardCommandsMessage(long chatID, String userMessageText) {
-        return new SendMessage(chatID, "Выбран: " + userMessageText + '\n' + '\n' + "Что вы хотите сделать далее:").replyMarkup(createQueryKeyboard());
+        return new SendMessage(chatID, "Выбран: " + userMessageText + '\n' + '\n' + "Что вы хотите сделать далее:").replyMarkup(getStartMenuKeyboard());
+    }
+
+    public SendMessage getReplyMessage(long chatId, String userName, String userMessageText) {
+        return switch (userMessageText) {
+            case "/start" -> getStartMessage(chatId, userName);
+            case "Информация о боте" -> getInfoMessage(chatId);
+            case "Вернуться к выбору приюта" -> getKeyboardShelterMessage(chatId);
+            case "Приют для кошек", "Приют для собак" -> getKeyboardCommandsMessage(chatId, userMessageText);
+            default -> throw new IllegalStateException("Unexpected value: " + userMessageText);
+        };
     }
 
     private Keyboard getShelterTypeKeyboard() {
         return new InlineKeyboardMarkup(
-                new InlineKeyboardButton(SHELTER_CAT + "\uD83D\uDC08")
+                new InlineKeyboardButton(SHELTER_CAT.getCommand() + "\uD83D\uDC08")
                         .callbackData(SHELTER_CAT.getCommand()),
-                new InlineKeyboardButton(SHELTER_DOG + "\uD83D\uDC15")
+                new InlineKeyboardButton(SHELTER_DOG.getCommand() + "\uD83D\uDC15")
                         .callbackData(SHELTER_DOG.getCommand()));
     }
 
-    private Keyboard createQueryKeyboard() {
-        return new ReplyKeyboardMarkup(
-                new KeyboardButton[]{new KeyboardButton(INFO_SHELTER.getCommand()),},
-                new KeyboardButton[]{new KeyboardButton(ADOPT_PET.getCommand()),},
-                new KeyboardButton[]{new KeyboardButton(SEND_REPORT.getCommand()),},
-                new KeyboardButton[]{new KeyboardButton(BACK_TO_SHELTER_SELECTION.getCommand()),},
-                new KeyboardButton[]{new KeyboardButton(BOT_INFORMATION.getCommand()),},
-                new KeyboardButton[]{new KeyboardButton(CALL_VOLUNTEER.getCommand())}
-        );
+    private Keyboard getStartMenuKeyboard() {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(INFO_SHELTER.getCommand())
+                .callbackData(INFO_SHELTER.getCommand()));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(ADOPT_PET.getCommand())
+                .callbackData(ADOPT_PET.getCommand()));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(SEND_REPORT.getCommand())
+                .callbackData(SEND_REPORT.getCommand()));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BACK_TO_SHELTER_SELECTION.getCommand())
+                .callbackData(BACK_TO_SHELTER_SELECTION.getCommand()));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(BOT_INFORMATION.getCommand())
+                .callbackData(BOT_INFORMATION.getCommand()));
+        inlineKeyboardMarkup.addRow(new InlineKeyboardButton(CALL_VOLUNTEER.getCommand())
+                .callbackData(CALL_VOLUNTEER.getCommand()));
+        return inlineKeyboardMarkup;
     }
 }

@@ -1,4 +1,4 @@
-package com.application.animalshelter.listener;
+package com.application.animalshelter.enums;
 
 
 public enum Commands {
