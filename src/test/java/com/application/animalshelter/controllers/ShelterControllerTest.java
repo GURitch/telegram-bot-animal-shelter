@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
 import java.util.List;
-import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -41,7 +42,7 @@ public class ShelterControllerTest {
         shelter.setId(1L);
         shelter.setAddress("address");
 
-        Mockito.when(shelterService.saveShelter(Mockito.any(Shelter.class))).thenReturn(shelter);
+        Mockito.when(shelterService.addShelter(any(Shelter.class))).thenReturn(shelter);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/shelter")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,7 +59,7 @@ public class ShelterControllerTest {
         shelter.setId(shelterId);
         shelter.setAddress("address");
 
-        Mockito.when(shelterService.getShelter(shelterId)).thenReturn(Optional.of(shelter));
+        Mockito.when(shelterService.getShelter(shelterId)).thenReturn(shelter);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/shelter")
                         .param("id", shelterId.toString()))

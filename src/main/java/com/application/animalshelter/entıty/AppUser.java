@@ -1,9 +1,6 @@
 package com.application.animalshelter.entıty;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -14,28 +11,20 @@ public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+
     private Long telegramUserId;
+
     /*добавит текущую дату на момент сохранения данных в БД*/
     @CreationTimestamp
     private LocalDateTime firstLoginDate;
+
+    private String phoneNumber;
+    private String shelterType;
     private String firstName;
     private String lastName;
     private String userName;
     private String email;
     private Boolean isActive;
-
-    public AppUser(){}
-
-    public AppUser(Long id, Long telegramUserId, LocalDateTime firstLoginDate, String firstName, String lastName, String userName, String email, Boolean isActive) {
-        Id = id;
-        this.telegramUserId = telegramUserId;
-        this.firstLoginDate = firstLoginDate;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.userName = userName;
-        this.email = email;
-        this.isActive = isActive;
-    }
 
     public Long getId() {
         return Id;
@@ -101,17 +90,32 @@ public class AppUser {
         isActive = active;
     }
 
+    public String getShelterType() {
+        return shelterType;
+    }
+
+    public void setShelterType(String animalType) {
+        this.shelterType = animalType;
+    }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AppUser appUser = (AppUser) o;
-        return Objects.equals(telegramUserId, appUser.telegramUserId) && Objects.equals(firstLoginDate, appUser.firstLoginDate) && Objects.equals(firstName, appUser.firstName) && Objects.equals(lastName, appUser.lastName) && Objects.equals(userName, appUser.userName) && Objects.equals(email, appUser.email) && Objects.equals(isActive, appUser.isActive);
+        AppUser user = (AppUser) o;
+        return Objects.equals(telegramUserId, user.telegramUserId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(telegramUserId, firstLoginDate, firstName, lastName, userName, email, isActive);
+        return Objects.hash(telegramUserId);
     }
 
     @Override

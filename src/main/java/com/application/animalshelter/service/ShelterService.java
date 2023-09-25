@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface ShelterService {
-    Shelter saveShelter(Shelter shelter);
-    Optional<Shelter> getShelter(Long Id);
+    Shelter addShelter(Shelter shelter);
+    Shelter getShelter(Long Id);
     void deleteShelter(Shelter shelter);
     Collection<Shelter> getAllShelters();
 

@@ -75,7 +75,7 @@ public class AnimalController {
             tags = "Животные"
     )
     @GetMapping()
-    public ResponseEntity<Optional<Animal>> getAnimal(@Parameter(description = "ID животного", example = "1") @RequestParam Long id) {
+    public ResponseEntity<Animal> getAnimal(@Parameter(description = "ID животного", example = "1") @RequestParam Long id) {
         return ResponseEntity.ok(animalService.findAnimal(id));
     }
 

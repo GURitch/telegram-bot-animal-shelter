@@ -2,6 +2,7 @@ package com.application.animalshelter.service.impl;
 
 import com.application.animalshelter.dao.AnimalDAO;
 import com.application.animalshelter.entıty.Animal;
+import com.application.animalshelter.exception.AnimalNotFoundException;
 import com.application.animalshelter.service.AnimalService;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
@@ -21,8 +22,8 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public Optional<Animal> findAnimal(Long id) {
-        return animalDAO.findById(id);
+    public Animal findAnimal(Long id) {
+        return animalDAO.findById(id).orElseThrow(()-> new AnimalNotFoundException());
     }
 
     @Override

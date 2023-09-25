@@ -2,6 +2,7 @@ package com.application.animalshelter.service.impl;
 
 import com.application.animalshelter.dao.AnimalDAO;
 import com.application.animalshelter.entıty.Animal;
+import com.application.animalshelter.exception.AnimalNotFoundException;
 import com.application.animalshelter.service.AnimalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,14 +50,16 @@ public class AnimalServiceImplTest {
 
         when(animalDAO.findById(animalId)).thenReturn(Optional.of(animal)); // Мокируем метод поиска по ID
 
-        Optional<Animal> foundAnimal = out.findAnimal(animalId);
+        Animal foundAnimal = out.findAnimal(animalId);
 
         // Проверяем, что метод findById был вызван один раз с нужным ID
         verify(animalDAO, times(1)).findById(animalId);
 
         // Проверяем, что найденное животное совпадает с возвращаемым значением
-        assertTrue(foundAnimal.isPresent());
-        assertSame(foundAnimal.get(), animal);
+        assertNotNull(foundAnimal);
+        assertSame(foundAnimal, animal);
+
+
     }
 
     @Test

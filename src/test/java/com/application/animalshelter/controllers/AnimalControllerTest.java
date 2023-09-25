@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
-import java.util.Optional;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -62,7 +61,7 @@ class AnimalControllerTest {
         animal.setId(animalId);
         animal.setName("Test Animal");
 
-        when(animalService.findAnimal(animalId)).thenReturn(Optional.of(animal));
+        when(animalService.findAnimal(animalId)).thenReturn(animal);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/animal")
                         .param("id", animalId.toString()))

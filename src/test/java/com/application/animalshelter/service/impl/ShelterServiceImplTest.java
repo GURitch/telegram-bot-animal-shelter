@@ -34,7 +34,7 @@ class ShelterServiceImplTest {
         Shelter shelterToSave = new Shelter(); // Создаем тестовый приют
         when(shelterDAO.save(shelterToSave)).thenReturn(shelterToSave); // Мокируем метод сохранения
 
-        Shelter savedShelter = out.saveShelter(shelterToSave);
+        Shelter savedShelter = out.addShelter(shelterToSave);
 
         // Проверяем, что метод save был вызван один раз с нашим приютом
         verify(shelterDAO, times(1)).save(shelterToSave);
@@ -49,14 +49,14 @@ class ShelterServiceImplTest {
         Shelter shelter = new Shelter();
         when(shelterDAO.findById(shelterId)).thenReturn(Optional.of(shelter)); // Мокируем метод поиска по ID
 
-        Optional<Shelter> retrievedShelter = out.getShelter(shelterId);
+        Shelter retrievedShelter = out.getShelter(shelterId);
 
         // Проверяем, что метод findById был вызван один раз с указанным ID
         verify(shelterDAO, times(1)).findById(shelterId);
 
         // Проверяем, что результат метода совпадает с возвращаемым значением
-        assertTrue(retrievedShelter.isPresent());
-        assertEquals(retrievedShelter.get(), shelter);
+        assertNotNull(retrievedShelter);
+        assertEquals(retrievedShelter, shelter);
     }
 
     @Test

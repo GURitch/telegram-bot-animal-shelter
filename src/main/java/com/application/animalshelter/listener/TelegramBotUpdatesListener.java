@@ -2,6 +2,7 @@ package com.application.animalshelter.listener;
 
 import com.application.animalshelter.dao.AppUserDAO;
 import com.application.animalshelter.entıty.AppUser;
+import com.application.animalshelter.enums.Commands;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 
@@ -12,6 +13,9 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Класс, отвечающий за обработку обновлений бота Telegram.
@@ -56,7 +60,7 @@ public class TelegramBotUpdatesListener {
         } else if (update.callbackQuery() != null) {
             processCallbackQuery(update);
         } else if (update.message() != null) {
-            processInvalidCommand(update);
+            processUserResponse(update);
         } else {
             logger.info("Update is not supported: {}", update);
         }
@@ -100,7 +104,90 @@ public class TelegramBotUpdatesListener {
         logger.info("Processing callback query: {}", update.callbackQuery());
         long chatId = update.callbackQuery().message().chat().id();
         String userMessageText = update.callbackQuery().data();
-        sendMessage(messageBuilder.getReplyMessage(chatId, userMessageText));
+        long userId = update.callbackQuery().from().id();
+
+        //При нажатии на кнопку выбора приюта, сохраняем эту информацию
+        if (userMessageText.equals(Commands.SHELTER_CAT.getText()) || userMessageText.equals(Commands.SHELTER_DOG.getText())) {
+            AppUser user = appUserDAO.findByTelegramUserId(userId);
+            user.setShelterType(userMessageText);
+            appUserDAO.save(user);
+        }
+        sendMessage(messageBuilder.getReplyMessage(chatId, userMessageText, userId));
+    }
+
+    /**
+     * Метод для обработки ответа пользователя, содержащего номер телефона и почту.
+     *
+     */
+    private void processUserResponse(Update update) {
+        long chatId = update.message().chat().id();
+        String text = update.message().text();
+
+        String phoneNumber = extractPhoneNumber(text);
+        String email = extractEmail(text);
+
+        AppUser user = appUserDAO.findByTelegramUserId(chatId);
+        if (phoneNumber == null || email == null) {
+            sendMessage(new SendMessage(chatId, "Телефон или почта введены не корректно, попробуйте еще"));
+            sendMessage(messageBuilder.getReplyMessage(chatId,Commands.CONTACT_DETAILS.getText(),chatId));
+            return;
+        }
+        if (user != null) {
+            user.setPhoneNumber(phoneNumber);
+            user.setEmail(email);
+            appUserDAO.save(user);
+            sendMessage(new SendMessage(chatId, "Спасибо! Ваши контактные данные сохранены.").replyMarkup(messageBuilder.getStartMenuKeyboard()));
+
+        }
+    }
+
+    /**
+     * Метод для извлечения номера телефона из текста.
+     *
+     * @param text Текст, из которого нужно извлечь номер телефона.
+     * @return Строка с номером телефона или null, если номер не найден или некорректен.
+     */
+    private String extractPhoneNumber(String text) {
+        String pattern = "\\+?\\d+"; // Любое количество цифр, возможно с "+" в начале
+
+        Pattern phonePattern = Pattern.compile(pattern);
+        Matcher matcher = phonePattern.matcher(text);
+
+        StringBuilder phoneNumber = new StringBuilder();
+
+        int digitCount = 0;
+        while (matcher.find()) {
+            String match = matcher.group();
+            if (digitCount + match.length() <= 11) {
+                phoneNumber.append(match);
+                digitCount += match.length();
+            } else {
+                break;
+            }
+        }
+        if(phoneNumber.length()<11){
+            return null;
+        }
+        return phoneNumber.toString();
+    }
+
+    /**
+     * Метод для извлечения адреса электронной почты из текста.
+     *
+     * @param text Текст, из которого нужно извлечь адрес электронной почты.
+     * @return Строка с адресом электронной почты или null, если адрес не найден или некорректен.
+     */
+    private String extractEmail(String text) {
+        String pattern = "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,7}\\b";
+
+        Pattern emailPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = emailPattern.matcher(text);
+
+        if (matcher.find()) {
+            return matcher.group();
+        } else {
+            return null;
+        }
     }
 
     /**

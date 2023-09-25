@@ -12,9 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Collection;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/shelter")
@@ -46,7 +45,7 @@ public class ShelterController {
             return ResponseEntity.notFound().build();
         }
 
-        Shelter savedShelter = shelterService.saveShelter(shelter);
+        Shelter savedShelter = shelterService.addShelter(shelter);
         return ResponseEntity.ok(savedShelter);
     }
 
@@ -68,11 +67,7 @@ public class ShelterController {
     )
     @GetMapping()
     public ResponseEntity<Shelter> getShelter(@Parameter(description = "ID приюта", example = "1")@RequestParam Long id){
-        Optional<Shelter> shelter = shelterService.getShelter(id);
-        if(shelter.isEmpty()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(shelter.get());
+        return ResponseEntity.ok(shelterService.getShelter(id));
     }
 
     @Operation(summary = "УДАЛИТЬ ПО ID",

@@ -2,6 +2,7 @@ package com.application.animalshelter.service.impl;
 
 import com.application.animalshelter.dao.ShelterDAO;
 import com.application.animalshelter.entıty.Shelter;
+import com.application.animalshelter.exception.ShelterNotFoundException;
 import com.application.animalshelter.service.ShelterService;
 import org.springframework.stereotype.Service;
 import java.util.Collection;
@@ -16,13 +17,13 @@ public class ShelterServiceImpl implements ShelterService {
     }
 
     @Override
-    public Shelter saveShelter(Shelter shelter) {
+    public Shelter addShelter(Shelter shelter) {
         return  shelterDAO.save(shelter);
     }
 
     @Override
-    public Optional<Shelter> getShelter(Long Id) {
-        return shelterDAO.findById(Id);
+    public Shelter getShelter(Long Id) {
+        return shelterDAO.findById(Id).orElseThrow(()-> new ShelterNotFoundException());
     }
     @Override
     public void deleteShelter(Shelter shelter) {
