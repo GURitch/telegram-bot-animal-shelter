@@ -36,6 +36,10 @@ public class Shelter {
     @OneToMany(mappedBy = "shelter")
     private Collection<Animal> animals;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "shelter")
+    private Collection<Volunteer> volunteers;
+
     public Long getId() {
         return id;
     }

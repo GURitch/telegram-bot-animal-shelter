@@ -1,63 +1,54 @@
 package com.application.animalshelter.entıty;
 
-import com.application.animalshelter.enums.AnimalType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Objects;
 
 @Entity
-public class Animal {
+public class Volunteer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Enumerated(EnumType.STRING)
-    private AnimalType animalType;
-
-    private String name;
-    private int age;
+    long id;
+    private String firstName;
+    private String lastName;
+    long telegramId;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     private Shelter shelter;
 
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private AppUser user;
-
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public int getAge() {
-        return age;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public AnimalType getAnimalType() {
-        return animalType;
+    public long getTelegramId() {
+        return telegramId;
     }
 
-    public void setAnimalType(AnimalType animalType) {
-        this.animalType = animalType;
+    public void setTelegramId(long telegramId) {
+        this.telegramId = telegramId;
     }
 
     public Shelter getShelter() {
@@ -72,8 +63,8 @@ public class Animal {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Animal animal = (Animal) o;
-        return id.equals(animal.id);
+        Volunteer volunteer = (Volunteer) o;
+        return id == volunteer.id;
     }
 
     @Override
@@ -83,11 +74,11 @@ public class Animal {
 
     @Override
     public String toString() {
-        return "Animal{" +
+        return "Volunteer{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", animalType=" + animalType +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", telegramId=" + telegramId +
                 ", shelter=" + shelter +
                 '}';
     }

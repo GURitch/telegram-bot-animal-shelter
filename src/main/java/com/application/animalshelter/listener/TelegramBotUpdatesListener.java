@@ -50,7 +50,7 @@ public class TelegramBotUpdatesListener {
     }
 
     /**
-     * Метод для обработки обновления (нового сообщения или коллбэка).
+     * Метод для обработки обновления ("/start", коллбэка из кнопки или текста пользователя).
      *
      * @param update Объект, представляющий собой обновление.
      */
@@ -87,7 +87,6 @@ public class TelegramBotUpdatesListener {
             tempAppUser.setFirstName(telegramUser.firstName());
             tempAppUser.setLastName(telegramUser.lastName());
             tempAppUser.setUserName(telegramUser.username());
-            tempAppUser.setActive(true);
             appUserDAO.save(tempAppUser);
         } else {
             // Если пользователь уже обращался к боту ранее, то новое обращение начинается с выбора приюта
@@ -103,16 +102,16 @@ public class TelegramBotUpdatesListener {
     private void processCallbackQuery(Update update) {
         logger.info("Processing callback query: {}", update.callbackQuery());
         long chatId = update.callbackQuery().message().chat().id();
-        String userMessageText = update.callbackQuery().data();
+        String callbackDataText = update.callbackQuery().data();
         long userId = update.callbackQuery().from().id();
 
-        //При нажатии на кнопку выбора приюта, сохраняем эту информацию
-        if (userMessageText.equals(Commands.SHELTER_CAT.getText()) || userMessageText.equals(Commands.SHELTER_DOG.getText())) {
+        //При нажатии на кнопку выбора приюта, сохраняем эту информацию в пользователе
+        if (callbackDataText.equals(Commands.SHELTER_CAT.getText()) || callbackDataText.equals(Commands.SHELTER_DOG.getText())) {
             AppUser user = appUserDAO.findByTelegramUserId(userId);
-            user.setShelterType(userMessageText);
+            user.setShelterType(callbackDataText);
             appUserDAO.save(user);
         }
-        sendMessage(messageBuilder.getReplyMessage(chatId, userMessageText, userId));
+        sendMessage(messageBuilder.getReplyMessage(chatId, callbackDataText, userId));
     }
 
     /**

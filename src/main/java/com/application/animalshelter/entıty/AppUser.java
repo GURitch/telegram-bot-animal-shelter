@@ -1,9 +1,11 @@
 package com.application.animalshelter.entıty;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +27,10 @@ public class AppUser {
     private String userName;
     private String email;
     private Boolean isActive;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user")
+    private Collection<Animal> animals;
 
     public Long getId() {
         return Id;

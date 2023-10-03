@@ -38,15 +38,15 @@ public class MessageBuilder {
     }
 
     /**
-     * Создает сообщение в зависимости от текста, полученного от пользователя.
+     * Создает сообщение в зависимости от кнопки, нажатой пользователем.
      *
      * @param chatId          Идентификатор чата с пользователем.
      * @param userId          Идентификатор пользователя.
-     * @param userMessageText Текст сообщения, полученный от пользователя.
+     * @param callbackDataText Текст сообщения, полученный от пользователя.
      * @return SendMessage с соответствующим ответом на текст пользователя и клавиатурой.
      */
-    public SendMessage getReplyMessage(long chatId, String userMessageText, long userId) {
-        return switch (userMessageText) {
+    public SendMessage getReplyMessage(long chatId, String callbackDataText, long userId) {
+        return switch (callbackDataText) {
             case "Информация о боте" -> new SendMessage(chatId, getBotInfoMessage());
             case "Вернуться к выбору приюта" -> new SendMessage(chatId, "Пожалуйста, выберите приют:").replyMarkup(getShelterTypeKeyboard());
             case "Приют для кошек", "Приют для собак" -> new SendMessage(chatId, "Выбери, что тебя интересует:").replyMarkup(getStartMenuKeyboard());
