@@ -30,7 +30,7 @@ public class ShelterController {
                     description = "Приют добавлен",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Animal.class)
+                            schema = @Schema(implementation = Shelter.class)
                     )
             )
             },
@@ -67,7 +67,7 @@ public class ShelterController {
     )
     @GetMapping()
     public ResponseEntity<Shelter> getShelter(@Parameter(description = "ID приюта", example = "1")@RequestParam Long id){
-        return ResponseEntity.ok(shelterService.getShelter(id));
+        return ResponseEntity.ok(shelterService.findShelterById(id));
     }
 
     @Operation(summary = "УДАЛИТЬ ПО ID",
@@ -83,9 +83,8 @@ public class ShelterController {
             tags = "Приюты"
     )
     @DeleteMapping()
-    public ResponseEntity<String> deleteShelter(@RequestBody Shelter shelter){
-        shelterService.deleteShelter(shelter);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteShelterById(@RequestParam long id){
+        return ResponseEntity.ok(shelterService.deleteShelterById(id));
     }
 
     @Operation(summary = "ПОЛУЧИТЬ ВСЕ ПРИЮТЫ",

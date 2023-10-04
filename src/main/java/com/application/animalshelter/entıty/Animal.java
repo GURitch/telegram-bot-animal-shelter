@@ -18,12 +18,12 @@ public class Animal {
     private String name;
     private int age;
 
-    @JsonBackReference
+    @JsonBackReference("shelter-animals")
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     private Shelter shelter;
 
-    @JsonBackReference
+    @JsonBackReference("user-animals")
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser user;
@@ -66,6 +66,14 @@ public class Animal {
 
     public void setShelter(Shelter shelter) {
         this.shelter = shelter;
+    }
+
+    public AppUser getUser() {
+        return user;
+    }
+
+    public void setUser(AppUser appUser) {
+        this.user = appUser;
     }
 
     @Override

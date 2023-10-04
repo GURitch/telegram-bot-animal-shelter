@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public interface AnimalService {
     Animal addAnimal(Animal animal);
-    Animal findAnimal(Long id);
+    Animal findAnimalById(Long id);
     Collection<Animal> getAllAnimal();
     void deleteAnimalById(Long id);
 }

@@ -14,7 +14,7 @@ public class Volunteer {
     private String lastName;
     long telegramId;
 
-    @JsonBackReference
+    @JsonBackReference("shelter-volunteers")
     @ManyToOne
     @JoinColumn(name = "shelter_id")
     private Shelter shelter;

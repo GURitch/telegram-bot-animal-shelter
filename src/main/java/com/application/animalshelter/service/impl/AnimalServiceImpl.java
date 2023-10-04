@@ -22,8 +22,8 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     @Override
-    public Animal findAnimal(Long id) {
-        return animalDAO.findById(id).orElseThrow(()-> new AnimalNotFoundException());
+    public Animal findAnimalById(Long id) {
+        return animalDAO.findById(id).orElseThrow(AnimalNotFoundException::new);
     }
 
     @Override

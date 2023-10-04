@@ -59,7 +59,7 @@ public class ShelterControllerTest {
         shelter.setId(shelterId);
         shelter.setAddress("address");
 
-        Mockito.when(shelterService.getShelter(shelterId)).thenReturn(shelter);
+        Mockito.when(shelterService.findShelterById(shelterId)).thenReturn(shelter);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/shelter")
                         .param("id", shelterId.toString()))

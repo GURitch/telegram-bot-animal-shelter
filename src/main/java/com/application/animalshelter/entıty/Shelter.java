@@ -32,13 +32,21 @@ public class Shelter {
     private String passRules;
     private String shelterRules;
 
-    @JsonManagedReference
+    @JsonManagedReference("shelter-animals")
     @OneToMany(mappedBy = "shelter")
     private Collection<Animal> animals;
 
-    @JsonManagedReference
+    @JsonManagedReference("shelter-volunteers")
     @OneToMany(mappedBy = "shelter")
     private Collection<Volunteer> volunteers;
+
+    public Collection<Volunteer> getVolunteers() {
+        return volunteers;
+    }
+
+    public void setVolunteers(Collection<Volunteer> volunteers) {
+        this.volunteers = volunteers;
+    }
 
     public Long getId() {
         return id;

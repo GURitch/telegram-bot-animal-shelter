@@ -22,12 +22,13 @@ public class ShelterServiceImpl implements ShelterService {
     }
 
     @Override
-    public Shelter getShelter(Long Id) {
-        return shelterDAO.findById(Id).orElseThrow(()-> new ShelterNotFoundException());
+    public Shelter findShelterById(long id) {
+        return shelterDAO.findById(id).orElseThrow(ShelterNotFoundException::new);
     }
     @Override
-    public void deleteShelter(Shelter shelter) {
-        shelterDAO.delete(shelter);
+    public String deleteShelterById(long id) {
+        shelterDAO.delete(findShelterById(id));
+        return "Объект удален";
     }
 
     @Override

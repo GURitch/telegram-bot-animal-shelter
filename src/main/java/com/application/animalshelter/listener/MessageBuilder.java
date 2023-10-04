@@ -1,6 +1,6 @@
 package com.application.animalshelter.listener;
 
-import com.application.animalshelter.dao.AppUserDAO;
+import com.application.animalshelter.dao.UserDAO;
 import com.application.animalshelter.dao.ShelterDAO;
 import com.application.animalshelter.entıty.Shelter;
 import com.application.animalshelter.enums.AnimalType;
@@ -16,11 +16,11 @@ import static com.application.animalshelter.enums.Commands.*;
  */
 @Service
 public class MessageBuilder {
-    private final AppUserDAO appUserDAO;
+    private final UserDAO userDAO;
     private final ShelterDAO shelterDAO;
 
-    public MessageBuilder(AppUserDAO appUserDAO, ShelterDAO shelterDAO) {
-        this.appUserDAO = appUserDAO;
+    public MessageBuilder(UserDAO userDAO, ShelterDAO shelterDAO) {
+        this.userDAO = userDAO;
         this.shelterDAO = shelterDAO;
     }
 
@@ -78,7 +78,7 @@ public class MessageBuilder {
      * @return Объект Shelter, представляющий приют.
      */
     private Shelter getShelterByType(long userId) {
-        String shelterType = appUserDAO.findByTelegramUserId(userId).getShelterType();
+        String shelterType = userDAO.findByTelegramUserId(userId).getShelterType();
         if (shelterType.equals(SHELTER_CAT.getText())) {
             return shelterDAO.findByAnimalType(AnimalType.CAT);
         } else return shelterDAO.findByAnimalType(AnimalType.DOG);
@@ -197,7 +197,7 @@ public class MessageBuilder {
                 .callbackData(ADULT_ANIMAL.getText()));
         inlineKeyboardMarkup.addRow(new InlineKeyboardButton(DISABLED_ANIMAL.getText())
                 .callbackData(DISABLED_ANIMAL.getText()));
-        if (appUserDAO.findByTelegramUserId(userId).getShelterType().equals(SHELTER_DOG.getText())) {
+        if (userDAO.findByTelegramUserId(userId).getShelterType().equals(SHELTER_DOG.getText())) {
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(TRAINING_TIPS.getText())
                     .callbackData(TRAINING_TIPS.getText()));
             inlineKeyboardMarkup.addRow(new InlineKeyboardButton(DOG_TRAINERS.getText())

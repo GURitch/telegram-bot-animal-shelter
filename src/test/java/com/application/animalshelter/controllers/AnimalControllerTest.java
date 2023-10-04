@@ -61,7 +61,7 @@ class AnimalControllerTest {
         animal.setId(animalId);
         animal.setName("Test Animal");
 
-        when(animalService.findAnimal(animalId)).thenReturn(animal);
+        when(animalService.findAnimalById(animalId)).thenReturn(animal);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/animal")
                         .param("id", animalId.toString()))

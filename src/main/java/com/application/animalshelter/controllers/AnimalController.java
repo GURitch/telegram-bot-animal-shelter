@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/animal")
@@ -76,7 +75,7 @@ public class AnimalController {
     )
     @GetMapping()
     public ResponseEntity<Animal> getAnimal(@Parameter(description = "ID животного", example = "1") @RequestParam Long id) {
-        return ResponseEntity.ok(animalService.findAnimal(id));
+        return ResponseEntity.ok(animalService.findAnimalById(id));
     }
 
     @Operation(summary = "ПОЛУЧИТЬ ВСЕХ ЖИВОТНЫХ",

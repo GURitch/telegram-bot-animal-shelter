@@ -1,13 +1,12 @@
 package com.application.animalshelter.listener;
 
-import com.application.animalshelter.dao.AppUserDAO;
+import com.application.animalshelter.dao.UserDAO;
 import com.application.animalshelter.entıty.AppUser;
 import com.application.animalshelter.enums.Commands;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.User;
 import com.pengrad.telegrambot.request.SendMessage;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -28,13 +27,13 @@ public class TelegramBotUpdatesListener {
 
     private final TelegramBot telegramBot;
     private final MessageBuilder messageBuilder;
-    private final AppUserDAO appUserDAO;
+    private final UserDAO userDAO;
 
 
-    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageBuilder messageBuilder, AppUserDAO appUserDAO) {
+    public TelegramBotUpdatesListener(TelegramBot telegramBot, MessageBuilder messageBuilder, UserDAO userDAO) {
         this.telegramBot = telegramBot;
         this.messageBuilder = messageBuilder;
-        this.appUserDAO = appUserDAO;
+        this.userDAO = userDAO;
     }
 
     /**
@@ -76,18 +75,19 @@ public class TelegramBotUpdatesListener {
         long chatId = update.message().chat().id();
         String userName = update.message().chat().username();
 
-        User telegramUser = update.message().from();
+        com.pengrad.telegrambot.model.User telegramUser = update.message().from();
         // Проверяем, существует ли пользователь в базе данных
-        if (appUserDAO.findByTelegramUserId(telegramUser.id()) == null) {
+        if (userDAO.findByTelegramUserId(telegramUser.id()) == null) {
             // Если пользователя не существует, отправляем приветственное сообщение пользователю,
             // создаем временную запись пользователя и сохраняем в базе данных
             sendMessage(messageBuilder.getStartMessage(chatId, userName));
-            AppUser tempAppUser = new AppUser();
-            tempAppUser.setTelegramUserId(telegramUser.id());
-            tempAppUser.setFirstName(telegramUser.firstName());
-            tempAppUser.setLastName(telegramUser.lastName());
-            tempAppUser.setUserName(telegramUser.username());
-            appUserDAO.save(tempAppUser);
+            AppUser tempUser = new AppUser();
+            tempUser.setTelegramUserId(telegramUser.id());
+            tempUser.setFirstName(telegramUser.firstName());
+            tempUser.setLastName(telegramUser.lastName());
+            tempUser.setUserName(telegramUser.username());
+            tempUser.setAdoptedAnimal(false);
+            userDAO.save(tempUser);
         } else {
             // Если пользователь уже обращался к боту ранее, то новое обращение начинается с выбора приюта
             sendMessage(new SendMessage(chatId, "Давай продолжим! Выбери, что тебя интересует:").replyMarkup(messageBuilder.getShelterTypeKeyboard()));
@@ -106,10 +106,13 @@ public class TelegramBotUpdatesListener {
         long userId = update.callbackQuery().from().id();
 
         //При нажатии на кнопку выбора приюта, сохраняем эту информацию в пользователе
+        if (userDAO.findByTelegramUserId(userId)==null){
+            processStartCommand(update);
+        }
         if (callbackDataText.equals(Commands.SHELTER_CAT.getText()) || callbackDataText.equals(Commands.SHELTER_DOG.getText())) {
-            AppUser user = appUserDAO.findByTelegramUserId(userId);
-            user.setShelterType(callbackDataText);
-            appUserDAO.save(user);
+            AppUser appUser = userDAO.findByTelegramUserId(userId);
+            appUser.setShelterType(callbackDataText);
+            userDAO.save(appUser);
         }
         sendMessage(messageBuilder.getReplyMessage(chatId, callbackDataText, userId));
     }
@@ -125,16 +128,16 @@ public class TelegramBotUpdatesListener {
         String phoneNumber = extractPhoneNumber(text);
         String email = extractEmail(text);
 
-        AppUser user = appUserDAO.findByTelegramUserId(chatId);
+        AppUser appUser = userDAO.findByTelegramUserId(chatId);
         if (phoneNumber == null || email == null) {
             sendMessage(new SendMessage(chatId, "Телефон или почта введены не корректно, попробуйте еще"));
             sendMessage(messageBuilder.getReplyMessage(chatId,Commands.CONTACT_DETAILS.getText(),chatId));
             return;
         }
-        if (user != null) {
-            user.setPhoneNumber(phoneNumber);
-            user.setEmail(email);
-            appUserDAO.save(user);
+        if (appUser != null) {
+            appUser.setPhoneNumber(phoneNumber);
+            appUser.setEmail(email);
+            userDAO.save(appUser);
             sendMessage(new SendMessage(chatId, "Спасибо! Ваши контактные данные сохранены.").replyMarkup(messageBuilder.getStartMenuKeyboard()));
 
         }

@@ -49,7 +49,7 @@ class ShelterServiceImplTest {
         Shelter shelter = new Shelter();
         when(shelterDAO.findById(shelterId)).thenReturn(Optional.of(shelter)); // Мокируем метод поиска по ID
 
-        Shelter retrievedShelter = out.getShelter(shelterId);
+        Shelter retrievedShelter = out.findShelterById(shelterId);
 
         // Проверяем, что метод findById был вызван один раз с указанным ID
         verify(shelterDAO, times(1)).findById(shelterId);
@@ -62,8 +62,9 @@ class ShelterServiceImplTest {
     @Test
     void deleteShelter() {
         Shelter shelterToDelete = new Shelter(); // Создаем тестовый приют
+        shelterToDelete.setId(1L);
 
-        out.deleteShelter(shelterToDelete);
+        out.deleteShelterById(shelterToDelete.getId());
 
         // Проверяем, что метод delete был вызван один раз с указанным приютом
         verify(shelterDAO, times(1)).delete(shelterToDelete);

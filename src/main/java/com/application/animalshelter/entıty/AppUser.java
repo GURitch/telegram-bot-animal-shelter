@@ -12,7 +12,7 @@ import java.util.Objects;
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     private Long telegramUserId;
 
@@ -26,18 +26,18 @@ public class AppUser {
     private String lastName;
     private String userName;
     private String email;
-    private Boolean isActive;
+    private Boolean adoptedAnimal;
 
-    @JsonManagedReference
+    @JsonManagedReference("user-animals")
     @OneToMany(mappedBy = "user")
     private Collection<Animal> animals;
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public Long getTelegramUserId() {
@@ -88,12 +88,20 @@ public class AppUser {
         this.email = email;
     }
 
-    public Boolean getActive() {
-        return isActive;
+    public Boolean getAdoptedAnimal() {
+        return adoptedAnimal;
     }
 
-    public void setActive(Boolean active) {
-        isActive = active;
+    public void setAdoptedAnimal(Boolean adoptedAnimal) {
+        this.adoptedAnimal = adoptedAnimal;
+    }
+
+    public Collection<Animal> getAnimals() {
+        return animals;
+    }
+
+    public void setAnimals(Collection<Animal> animals) {
+        this.animals = animals;
     }
 
     public String getShelterType() {
@@ -115,26 +123,26 @@ public class AppUser {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AppUser user = (AppUser) o;
-        return Objects.equals(telegramUserId, user.telegramUserId);
+        AppUser appUser = (AppUser) o;
+        return Objects.equals(id, appUser.id) && Objects.equals(telegramUserId, appUser.telegramUserId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(telegramUserId);
+        return Objects.hash(id, telegramUserId);
     }
 
     @Override
     public String toString() {
         return "AppUser{" +
-                "Id=" + Id +
+                "Id=" + id +
                 ", telegramUserId=" + telegramUserId +
                 ", firstLoginDate=" + firstLoginDate +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", userName='" + userName + '\'' +
                 ", email='" + email + '\'' +
-                ", isActive=" + isActive +
+                ", isActive=" + adoptedAnimal +
                 '}';
     }
 }
