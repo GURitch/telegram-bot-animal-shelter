@@ -9,4 +9,5 @@ public interface UserService {
     AppUser findUserById(long id);
     String deleteUserById(long id);
     List<AppUser> findAllUsers();
+    AppUser editUser (AppUser user);
 }

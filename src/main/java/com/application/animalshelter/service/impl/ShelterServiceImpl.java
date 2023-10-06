@@ -35,4 +35,9 @@ public class ShelterServiceImpl implements ShelterService {
     public Collection<Shelter> getAllShelters() {
         return shelterDAO.findAll();
     }
+
+    @Override
+    public Shelter editShelter(Shelter shelter) {
+        return shelterDAO.save(shelter);
+    }
 }

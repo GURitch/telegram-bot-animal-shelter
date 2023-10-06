@@ -27,6 +27,10 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(@RequestParam long id){
         return ResponseEntity.ok(userService.deleteUserById(id));
     }
+    @PutMapping
+    public ResponseEntity<AppUser> editUser(@RequestBody AppUser user){
+        return ResponseEntity.ok(userService.editUser(user));
+    }
     @GetMapping("/all")
     public ResponseEntity<List<AppUser>> getAllUsers(){
         return ResponseEntity.ok(userService.findAllUsers());

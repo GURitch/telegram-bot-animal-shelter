@@ -9,5 +9,5 @@ public interface ShelterService {
     Shelter findShelterById(long Id);
     String deleteShelterById(long id);
     Collection<Shelter> getAllShelters();
-
+    Shelter editShelter (Shelter shelter);
 }

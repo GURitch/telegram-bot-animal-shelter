@@ -77,7 +77,7 @@ public class MessageBuilder {
      * @param userId Идентификатор пользователя.
      * @return Объект Shelter, представляющий приют.
      */
-    private Shelter getShelterByType(long userId) {
+    public Shelter getShelterByType(long userId) {
         String shelterType = userDAO.findByTelegramUserId(userId).getShelterType();
         if (shelterType.equals(SHELTER_CAT.getText())) {
             return shelterDAO.findByAnimalType(AnimalType.CAT);

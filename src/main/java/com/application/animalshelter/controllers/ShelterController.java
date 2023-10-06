@@ -1,6 +1,7 @@
 package com.application.animalshelter.controllers;
 
 import com.application.animalshelter.entıty.Animal;
+import com.application.animalshelter.entıty.AppUser;
 import com.application.animalshelter.entıty.Shelter;
 import com.application.animalshelter.service.ShelterService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,13 +50,18 @@ public class ShelterController {
         return ResponseEntity.ok(savedShelter);
     }
 
+    @PutMapping
+    public ResponseEntity<Shelter> editUser(@RequestBody Shelter shelter){
+        return ResponseEntity.ok(shelterService.editShelter(shelter));
+    }
+
     @Operation(summary = "ПОЛУЧИТЬ ПО ID",
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "Получен приют",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Animal.class)
+                            schema = @Schema(implementation = Shelter.class)
                     )
             ),
                     @ApiResponse(
@@ -76,7 +82,7 @@ public class ShelterController {
                     description = "Приют удален",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Animal.class)
+                            schema = @Schema(implementation = Shelter.class)
                     )
             )
             },

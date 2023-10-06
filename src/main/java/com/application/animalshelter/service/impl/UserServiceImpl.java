@@ -36,4 +36,9 @@ public class UserServiceImpl implements UserService {
     public List<AppUser> findAllUsers() {
         return userDAO.findAll();
     }
+
+    @Override
+    public AppUser editUser(AppUser user) {
+        return userDAO.save(user);
+    }
 }
