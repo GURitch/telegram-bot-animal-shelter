@@ -38,6 +38,12 @@ public class VolunteerController {
         return ResponseEntity.ok(savedAnimalShelter);
     }
 
+    /**
+     * a volunteer can get the existing shelter by its id
+     * @param Id must not be null
+     * @return ResponseEntity 200 code
+     * @see org.springframework.data.jpa.repository.JpaRepository#save(Object)
+     */
     @GetMapping()
     public ResponseEntity<AnimalShelter> getShelter(@PathVariable Long Id){
         AnimalShelter animalShelter = animalShelterService.getAnimalShelter(Id);
