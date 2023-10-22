@@ -1,5 +1,5 @@
 package com.application.animalshelter.enums;
 
-public enum CountryName {
+public enum Country {
     KZ
 }

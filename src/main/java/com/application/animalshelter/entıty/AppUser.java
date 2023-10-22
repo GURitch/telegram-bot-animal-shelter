@@ -106,12 +106,12 @@ public class AppUser {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AppUser appUser = (AppUser) o;
-        return Objects.equals(telegramUserId, appUser.telegramUserId) && Objects.equals(firstLoginDate, appUser.firstLoginDate) && Objects.equals(firstName, appUser.firstName) && Objects.equals(lastName, appUser.lastName) && Objects.equals(userName, appUser.userName) && Objects.equals(email, appUser.email) && Objects.equals(isActive, appUser.isActive);
+        return Objects.equals(Id, appUser.Id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(telegramUserId, firstLoginDate, firstName, lastName, userName, email, isActive);
+        return Objects.hash(Id);
     }
 
     @Override

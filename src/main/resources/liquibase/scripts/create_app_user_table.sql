@@ -2,7 +2,7 @@
 
 -- changeset amargolina:1
 CREATE TABLE app_user (
-                          id SERIAL,
+                          id SERIAL primary key,
                           telegram_user_id BIGINT,
                           first_login_date TIMESTAMP,
                           first_name   TEXT,
@@ -11,4 +11,4 @@ CREATE TABLE app_user (
                           email        TEXT,
                           is_active    BOOLEAN,
                           state   TEXT
-)
+);

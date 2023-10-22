@@ -1,5 +1,7 @@
 package com.application.animalshelter.enums;
 
-public enum CityName {
+public enum City {
+    ALMATY,
+    ARKALYK,
     ASTANA
 }

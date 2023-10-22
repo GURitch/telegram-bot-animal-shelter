@@ -6,6 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+
+/**
+ * API for volunteers
+ */
 
 @RestController
 @RequestMapping("/animal-shelter")
@@ -15,6 +20,13 @@ public class VolunteerController {
     public VolunteerController(AnimalShelterService animalShelterService) {
         this.animalShelterService = animalShelterService;
     }
+
+    /**
+     * a volunteer can add a new shelter or change an existing shelter
+     * @param animalShelter must not be null
+     * @return ResponseEntity 200 code
+     * @see org.springframework.data.jpa.repository.JpaRepository#save(Object)
+     */
 
     @PostMapping()
     public ResponseEntity<AnimalShelter> addNewShelter(@RequestBody AnimalShelter animalShelter){
@@ -27,7 +39,21 @@ public class VolunteerController {
     }
 
     @GetMapping()
-    public void getNewShelter(@RequestParam Long Id){
+    public ResponseEntity<AnimalShelter> getShelter(@PathVariable Long Id){
+        AnimalShelter animalShelter = animalShelterService.getAnimalShelter(Id);
+        return ResponseEntity.ok(animalShelter);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<AnimalShelter>> getAllShelters(){
+        List<AnimalShelter> animalShelters = animalShelterService.getAnimalShelters();
+        return ResponseEntity.ok(animalShelters);
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<?> deleteAnimalShelter(@PathVariable Long Id){
+        animalShelterService.deleteAnimalShelter(Id);
+        return ResponseEntity.ok().build();
     }
 
 }
